@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: gunicorn --bind 0.0.0.0:5000 manage:app
+    expose:
+      - 5000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0.21
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: service1234
+    volumes:
+      - licensia_servicio_mysql_data_prod:/var/lib/mysql
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+volumes:
+  licensia_servicio_mysql_data_prod:
