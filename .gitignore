@@ -50,6 +50,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+tests/integration/setup/config/config.py
 
 # Translations
 *.mo
@@ -103,6 +104,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.dev
+.env.prod
 .venv
 env/
 venv/
@@ -127,3 +130,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Jetbrains
+.idea/

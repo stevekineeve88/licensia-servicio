@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py run -h 0.0.0.0
+    volumes:
+      - ./:/usr/src/app/
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0.21
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: service1234
+    volumes:
+      - licensia_servicio_mysql_data_dev:/var/lib/mysql
+
+volumes:
+  licensia_servicio_mysql_data_dev:
