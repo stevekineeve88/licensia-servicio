@@ -1,0 +1,2 @@
+class LicenseDeleteException(Exception):
+    pass
