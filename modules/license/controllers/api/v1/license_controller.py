@@ -39,18 +39,18 @@ def create_license():
         return HTTPResponse(HTTPStatus.INTERNAL_SERVER_ERROR, str(e)).get_response()
 
 
-@license_v1_api.route(f"{ROOT}/<license_id>", methods=["PATCH"])
-def update_license_by_id(license_id: int):
+@license_v1_api.route(f"{ROOT}/<license_uuid>", methods=["PATCH"])
+def update_license_by_uuid(license_uuid: str):
     """ PATCH license information
     Args:
-        license_id (int):
+        license_uuid (str):
     Returns:
         tuple
     """
     service_locator = get_service_manager()
     license_manager: LicenseManager = service_locator.get(LicenseManager.__name__)
     try:
-        license_obj = license_manager.get_by_id(int(license_id))
+        license_obj = license_manager.get_by_uuid(license_uuid)
 
         data = json.loads(request.get_data().decode())
         license_obj.set_description(data["description"] if "description" in data else license_obj.get_description())
@@ -65,11 +65,11 @@ def update_license_by_id(license_id: int):
         return HTTPResponse(HTTPStatus.INTERNAL_SERVER_ERROR, str(e)).get_response()
 
 
-@license_v1_api.route(f"{ROOT}/<license_id>/status/<status_id>", methods=["PATCH"])
-def update_license_status_by_license_id(license_id: int, status_id: int):
+@license_v1_api.route(f"{ROOT}/<license_uuid>/status/<status_id>", methods=["PATCH"])
+def update_license_status_by_license_uuid(license_uuid: str, status_id: int):
     """ PATCH license status
     Args:
-        license_id (int):
+        license_uuid (str):
         status_id (int):
     Returns:
         tuple
@@ -79,7 +79,7 @@ def update_license_status_by_license_id(license_id: int, status_id: int):
     status_manager: StatusManager = service_locator.get(StatusManager.__name__)
     try:
         status = status_manager.get_by_id(int(status_id))
-        license_obj = license_manager.update_status(int(license_id), status)
+        license_obj = license_manager.update_status(license_uuid, status)
         return HTTPResponse(HTTPStatus.OK, "", [license_obj]).get_response()
     except LicenseUpdateException as e:
         return HTTPResponse(HTTPStatus.CONFLICT, str(e)).get_response()
@@ -89,18 +89,18 @@ def update_license_status_by_license_id(license_id: int, status_id: int):
         return HTTPResponse(HTTPStatus.INTERNAL_SERVER_ERROR, str(e)).get_response()
 
 
-@license_v1_api.route(f"{ROOT}/<license_id>", methods=["GET"])
-def get_license_by_id(license_id: int):
+@license_v1_api.route(f"{ROOT}/<license_uuid>", methods=["GET"])
+def get_license_by_uuid(license_uuid: str):
     """ GET license
     Args:
-        license_id (int):
+        license_uuid (str):
     Returns:
         tuple
     """
     service_locator = get_service_manager()
     license_manager: LicenseManager = service_locator.get(LicenseManager.__name__)
     try:
-        license_obj = license_manager.get_by_id(int(license_id))
+        license_obj = license_manager.get_by_uuid(license_uuid)
         return HTTPResponse(HTTPStatus.OK, "", [license_obj]).get_response()
     except LicenseFetchException as e:
         return HTTPResponse(HTTPStatus.NOT_FOUND, str(e)).get_response()
@@ -137,18 +137,18 @@ def search_licenses():
         return HTTPResponse(HTTPStatus.INTERNAL_SERVER_ERROR, str(e)).get_response()
 
 
-@license_v1_api.route(f"{ROOT}/<license_id>", methods=["DELETE"])
-def delete_license_by_id(license_id: int):
+@license_v1_api.route(f"{ROOT}/<license_uuid>", methods=["DELETE"])
+def delete_license_by_id(license_uuid: str):
     """ DELETE license
     Args:
-        license_id (int):
+        license_uuid (str):
     Returns:
         tuple
     """
     service_locator = get_service_manager()
     license_manager: LicenseManager = service_locator.get(LicenseManager.__name__)
     try:
-        license_manager.delete(int(license_id))
+        license_manager.delete(license_uuid)
         return HTTPResponse(HTTPStatus.OK, "").get_response()
     except LicenseDeleteException as e:
         return HTTPResponse(HTTPStatus.CONFLICT, str(e)).get_response()

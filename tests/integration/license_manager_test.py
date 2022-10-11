@@ -73,7 +73,7 @@ class LicenseManagerTest(IntegrationSetup):
             "Description"
         )
 
-        self.license_manager.update_status(license_obj.get_id(), new_status)
+        self.license_manager.update_status(license_obj.get_uuid(), new_status)
         new_license_obj = self.license_manager.get_by_id(license_obj.get_id())
 
         self.assertEqual(new_status.get_id(), new_license_obj.get_status().get_id())
@@ -85,7 +85,7 @@ class LicenseManagerTest(IntegrationSetup):
             "Description"
         )
         with self.assertRaises(LicenseUpdateException):
-            self.license_manager.update_status(license_obj.get_id(), Status(123456, "SOME_CONST", "Description"))
+            self.license_manager.update_status(license_obj.get_uuid(), Status(123456, "SOME_CONST", "Description"))
             self.fail("Did not fail on update status for invalid status ID")
 
     def test_delete_deletes_license(self):
@@ -94,7 +94,7 @@ class LicenseManagerTest(IntegrationSetup):
             "CONST",
             "Description"
         )
-        self.license_manager.delete(license_obj.get_id())
+        self.license_manager.delete(license_obj.get_uuid())
 
         with self.assertRaises(LicenseFetchException):
             self.license_manager.get_by_id(license_obj.get_id())
@@ -102,7 +102,7 @@ class LicenseManagerTest(IntegrationSetup):
 
     def test_delete_fails_on_invalid_id(self):
         with self.assertRaises(LicenseDeleteException):
-            self.license_manager.delete(1)
+            self.license_manager.delete("sfsdfsdf")
             self.fail("Did not fail on delete for invalid ID")
 
     def test_search_searches_licenses(self):
