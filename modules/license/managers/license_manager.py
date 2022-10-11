@@ -51,6 +51,18 @@ class LicenseManager:
             raise LicenseFetchException(f"Could not fetch license with ID {license_id} ")
         return self.__build_license_obj(result.get_data()[0])
 
+    def get_by_uuid(self, license_uuid: str) -> License:
+        """ Get by UUID
+        Args:
+            license_uuid (str):
+        Returns:
+            License
+        """
+        result = self.__license_data.load_by_uuid(license_uuid)
+        if result.get_affected_rows() == 0:
+            raise LicenseFetchException(f"Could not fetch license with UUID {license_uuid}")
+        return self.__build_license_obj(result.get_data()[0])
+
     def update(self, license_obj: License) -> License:
         """ Update license
         Args:
@@ -63,27 +75,27 @@ class LicenseManager:
             raise LicenseUpdateException(f"Could not update license with ID {license_obj.get_id()}")
         return self.get_by_id(license_obj.get_id())
 
-    def update_status(self, license_id: int, status: Status) -> License:
+    def update_status(self, license_uuid: str, status: Status) -> License:
         """ Update license status
         Args:
-            license_id (int):
+            license_uuid (str):
             status (Status):
         Returns:
             License
         """
-        result = self.__license_data.update_status(license_id, status.get_id())
+        result = self.__license_data.update_status(license_uuid, status.get_id())
         if not result.get_status():
-            raise LicenseUpdateException(f"Could not update status for license with ID {license_id}")
-        return self.get_by_id(license_id)
+            raise LicenseUpdateException(f"Could not update status for license with UUID {license_uuid}")
+        return self.get_by_uuid(license_uuid)
 
-    def delete(self, license_id: int):
+    def delete(self, license_uuid: str):
         """ Delete license
         Args:
-            license_id (int):
+            license_uuid (str):
         """
-        result = self.__license_data.delete(license_id)
+        result = self.__license_data.delete(license_uuid)
         if result.get_affected_rows() == 0:
-            raise LicenseDeleteException(f"Could not delete license with ID {license_id}")
+            raise LicenseDeleteException(f"Could not delete license with UUID {license_uuid}")
 
     def search(self, **kwargs) -> LicenseSearchResult:
         """ Search licenses

@@ -54,6 +54,28 @@ class LicenseData:
             "id": license_id
         })
 
+    def load_by_uuid(self, license_uuid: str) -> Result:
+        """ Load by UUID
+        Args:
+            license_uuid (str):
+        Returns:
+            Result
+        """
+        return self.__connection_manager.select(f"""
+            SELECT
+                license.id,
+                bin_to_uuid(license.uuid) as uuid,
+                license.const,
+                license.description,
+                license.status_id,
+                license.created_timestamp,
+                license.update_timestamp
+            FROM license
+            WHERE bin_to_uuid(license.uuid) = %(uuid)s
+        """, {
+            "uuid": license_uuid
+        })
+
     def update(self, license_id: int, **kwargs) -> Result:
         """ Update license information
         Args:
@@ -71,33 +93,33 @@ class LicenseData:
             "id": license_id
         })
 
-    def update_status(self, license_id: int, status_id: int) -> Result:
+    def update_status(self, license_uuid: str, status_id: int) -> Result:
         """ Update license status
         Args:
-            license_id (int):   License ID
+            license_uuid (str):   License UUID
             status_id (int):    Status ID
         Returns:
             Result
         """
         return self.__connection_manager.query(f"""
             UPDATE license SET status_id = %(status_id)s
-            WHERE id = %(id)s
+            WHERE bin_to_uuid(uuid) = %(uuid)s
         """, {
             "status_id": status_id,
-            "id": license_id
+            "uuid": license_uuid
         })
 
-    def delete(self, license_id: int) -> Result:
+    def delete(self, license_uuid: str) -> Result:
         """ Delete license
         Args:
-            license_id (int):      License ID
+            license_uuid (str):      License UUID
         Returns:
             Result
         """
         return self.__connection_manager.query(f"""
-            DELETE FROM license WHERE id = %(id)s
+            DELETE FROM license WHERE bin_to_uuid(uuid) = %(uuid)s
         """, {
-            "id": license_id
+            "uuid": license_uuid
         })
 
     def search(self, **kwargs) -> Result:
